@@ -302,13 +302,13 @@ describe('instantiate client', () => {
     test('empty env variable', () => {
       process.env['RELAXAI_BASE_URL'] = ''; // empty
       const client = new Relaxai({ apiKey: 'My API Key' });
-      expect(client.baseURL).toEqual('/');
+      expect(client.baseURL).toEqual('http://127.0.0.1');
     });
 
     test('blank env variable', () => {
       process.env['RELAXAI_BASE_URL'] = '  '; // blank
       const client = new Relaxai({ apiKey: 'My API Key' });
-      expect(client.baseURL).toEqual('/');
+      expect(client.baseURL).toEqual('http://127.0.0.1');
     });
 
     test('in request options', () => {

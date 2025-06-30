@@ -137,7 +137,7 @@ export class Relaxai {
    * API Client for interfacing with the Relaxai API.
    *
    * @param {string | null | undefined} [opts.apiKey=process.env['RELAXAI_API_KEY'] ?? null]
-   * @param {string} [opts.baseURL=process.env['RELAXAI_BASE_URL'] ?? /] - Override the default base URL for the API.
+   * @param {string} [opts.baseURL=process.env['RELAXAI_BASE_URL'] ?? http://127.0.0.1] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -153,7 +153,7 @@ export class Relaxai {
     const options: ClientOptions = {
       apiKey,
       ...opts,
-      baseURL: baseURL || `/`,
+      baseURL: baseURL || `http://127.0.0.1`,
     };
 
     this.baseURL = options.baseURL!;
@@ -198,7 +198,7 @@ export class Relaxai {
    * Check whether the base URL is set to its default.
    */
   #baseURLOverridden(): boolean {
-    return this.baseURL !== '/';
+    return this.baseURL !== 'http://127.0.0.1';
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
