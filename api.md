@@ -55,13 +55,3 @@ Methods:
 
 - <code title="get /v1/models/{model}">client.models.<a href="./src/resources/models.ts">retrieve</a>(model) -> Model</code>
 - <code title="get /v1/models">client.models.<a href="./src/resources/models.ts">list</a>() -> ModelListResponse</code>
-
-# Tools
-
-Types:
-
-- <code><a href="./src/resources/tools.ts">ToolScrapResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/tools/scrap">client.tools.<a href="./src/resources/tools.ts">scrap</a>({ ...params }) -> ToolScrapResponse</code>

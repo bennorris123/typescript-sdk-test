@@ -31,7 +31,6 @@ import { CompletionCreateParams, CompletionCreateResponse, Completions } from '.
 import { EmbeddingCreateParams, EmbeddingCreateResponse, Embeddings } from './resources/embeddings';
 import { Health, HealthCheckResponse } from './resources/health';
 import { Model, ModelListResponse, Models } from './resources/models';
-import { ToolScrapParams, ToolScrapResponse, Tools } from './resources/tools';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -740,14 +739,12 @@ export class RelaxaiTest {
   embeddings: API.Embeddings = new API.Embeddings(this);
   health: API.Health = new API.Health(this);
   models: API.Models = new API.Models(this);
-  tools: API.Tools = new API.Tools(this);
 }
 RelaxaiTest.Chat = Chat;
 RelaxaiTest.Completions = Completions;
 RelaxaiTest.Embeddings = Embeddings;
 RelaxaiTest.Health = Health;
 RelaxaiTest.Models = Models;
-RelaxaiTest.Tools = Tools;
 export declare namespace RelaxaiTest {
   export type RequestOptions = Opts.RequestOptions;
 
@@ -778,10 +775,4 @@ export declare namespace RelaxaiTest {
   export { Health as Health, type HealthCheckResponse as HealthCheckResponse };
 
   export { Models as Models, type Model as Model, type ModelListResponse as ModelListResponse };
-
-  export {
-    Tools as Tools,
-    type ToolScrapResponse as ToolScrapResponse,
-    type ToolScrapParams as ToolScrapParams,
-  };
 }

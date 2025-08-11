@@ -15,4 +15,3 @@ export { Completions, type CompletionCreateResponse, type CompletionCreateParams
 export { Embeddings, type EmbeddingCreateResponse, type EmbeddingCreateParams } from './embeddings';
 export { Health, type HealthCheckResponse } from './health';
 export { Models, type Model, type ModelListResponse } from './models';
-export { Tools, type ToolScrapResponse, type ToolScrapParams } from './tools';
