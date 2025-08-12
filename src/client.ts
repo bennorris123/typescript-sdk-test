@@ -46,7 +46,7 @@ import { isEmptyObj } from './internal/utils/values';
 
 export interface ClientOptions {
   /**
-   * Defaults to process.env['RELAXAI_TEST_API_KEY'].
+   * Defaults to process.env['RELAXAI_API_KEY'].
    */
   apiKey?: string | null | undefined;
 
@@ -140,7 +140,7 @@ export class RelaxaiTest {
   /**
    * API Client for interfacing with the Relaxai Test API.
    *
-   * @param {string | null | undefined} [opts.apiKey=process.env['RELAXAI_TEST_API_KEY'] ?? null]
+   * @param {string | null | undefined} [opts.apiKey=process.env['RELAXAI_API_KEY'] ?? null]
    * @param {string} [opts.baseURL=process.env['RELAXAI_TEST_BASE_URL'] ?? /] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -151,7 +151,7 @@ export class RelaxaiTest {
    */
   constructor({
     baseURL = readEnv('RELAXAI_TEST_BASE_URL'),
-    apiKey = readEnv('RELAXAI_TEST_API_KEY') ?? null,
+    apiKey = readEnv('RELAXAI_API_KEY') ?? null,
     ...opts
   }: ClientOptions = {}) {
     const options: ClientOptions = {

@@ -425,14 +425,14 @@ describe('instantiate client', () => {
 
   test('with environment variable arguments', () => {
     // set options via env var
-    process.env['RELAXAI_TEST_API_KEY'] = 'My API Key';
+    process.env['RELAXAI_API_KEY'] = 'My API Key';
     const client = new RelaxaiTest();
     expect(client.apiKey).toBe('My API Key');
   });
 
   test('with overridden environment variable arguments', () => {
     // set options via env var
-    process.env['RELAXAI_TEST_API_KEY'] = 'another My API Key';
+    process.env['RELAXAI_API_KEY'] = 'another My API Key';
     const client = new RelaxaiTest({ apiKey: 'My API Key' });
     expect(client.apiKey).toBe('My API Key');
   });

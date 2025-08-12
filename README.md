@@ -26,7 +26,7 @@ The full API of this library can be found in [api.md](api.md).
 import RelaxaiTest from 'relaxai-test';
 
 const client = new RelaxaiTest({
-  apiKey: process.env['RELAXAI_TEST_API_KEY'], // This is the default and can be omitted
+  apiKey: process.env['RELAXAI_API_KEY'], // This is the default and can be omitted
 });
 
 const response = await client.chat.createCompletion({
@@ -46,7 +46,7 @@ This library includes TypeScript definitions for all request params and response
 import RelaxaiTest from 'relaxai-test';
 
 const client = new RelaxaiTest({
-  apiKey: process.env['RELAXAI_TEST_API_KEY'], // This is the default and can be omitted
+  apiKey: process.env['RELAXAI_API_KEY'], // This is the default and can be omitted
 });
 
 const params: RelaxaiTest.ChatCreateCompletionParams = {
