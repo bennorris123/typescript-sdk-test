@@ -8,7 +8,7 @@ const client = new RelaxaiTest({
 });
 
 describe('resource chat', () => {
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('createCompletion: only required params', async () => {
     const responsePromise = client.chat.createCompletion({
       messages: [{ MultiContent: [{}], role: 'role' }],
@@ -23,7 +23,7 @@ describe('resource chat', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('createCompletion: required and optional params', async () => {
     const response = await client.chat.createCompletion({
       messages: [
