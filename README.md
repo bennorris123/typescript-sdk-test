@@ -30,8 +30,13 @@ const client = new Relaxai({
 });
 
 const response = await client.chat.createCompletion({
-  messages: [{ MultiContent: [{}], role: 'role' }],
-  model: 'model',
+  messages: [
+    { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
+    { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
+  ],
+  model: 'DeepSeek-R1-0528',
+  max_tokens: 100,
+  temperature: 0.7,
 });
 
 console.log(response.id);
@@ -50,8 +55,13 @@ const client = new Relaxai({
 });
 
 const params: Relaxai.ChatCreateCompletionParams = {
-  messages: [{ MultiContent: [{}], role: 'role' }],
-  model: 'model',
+  messages: [
+    { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
+    { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
+  ],
+  model: 'DeepSeek-R1-0528',
+  max_tokens: 100,
+  temperature: 0.7,
 };
 const response: Relaxai.ChatCreateCompletionResponse = await client.chat.createCompletion(params);
 ```
@@ -67,7 +77,15 @@ a subclass of `APIError` will be thrown:
 <!-- prettier-ignore -->
 ```ts
 const response = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+  .createCompletion({
+    messages: [
+      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
+      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
+    ],
+    model: 'DeepSeek-R1-0528',
+    max_tokens: 100,
+    temperature: 0.7,
+  })
   .catch(async (err) => {
     if (err instanceof Relaxai.APIError) {
       console.log(err.status); // 400
@@ -108,7 +126,7 @@ const client = new Relaxai({
 });
 
 // Or, configure per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' }, { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' }], model: 'DeepSeek-R1-0528', max_tokens: 100, temperature: 0.7 }, {
   maxRetries: 5,
 });
 ```
@@ -125,7 +143,7 @@ const client = new Relaxai({
 });
 
 // Override per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' }, { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' }], model: 'DeepSeek-R1-0528', max_tokens: 100, temperature: 0.7 }, {
   timeout: 5 * 1000,
 });
 ```
@@ -149,13 +167,29 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 const client = new Relaxai();
 
 const response = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+  .createCompletion({
+    messages: [
+      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
+      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
+    ],
+    model: 'DeepSeek-R1-0528',
+    max_tokens: 100,
+    temperature: 0.7,
+  })
   .asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
 const { data: response, response: raw } = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+  .createCompletion({
+    messages: [
+      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
+      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
+    ],
+    model: 'DeepSeek-R1-0528',
+    max_tokens: 100,
+    temperature: 0.7,
+  })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
 console.log(response.id);
