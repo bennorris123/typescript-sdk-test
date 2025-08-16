@@ -737,10 +737,12 @@ export class Relaxai {
   health: API.Health = new API.Health(this);
   models: API.Models = new API.Models(this);
 }
+
 Relaxai.Chat = Chat;
 Relaxai.Embeddings = Embeddings;
 Relaxai.Health = Health;
 Relaxai.Models = Models;
+
 export declare namespace Relaxai {
   export type RequestOptions = Opts.RequestOptions;
 
