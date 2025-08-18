@@ -9,8 +9,8 @@ const client = new Relaxai({
 
 describe('resource embeddings', () => {
   // Prism tests are disabled
-  test.skip('create: only required params', async () => {
-    const responsePromise = client.embeddings.create({ input: {}, model: 'model' });
+  test.skip('createEmbedding: only required params', async () => {
+    const responsePromise = client.embeddings.createEmbedding({ input: {}, model: 'model' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,8 +21,8 @@ describe('resource embeddings', () => {
   });
 
   // Prism tests are disabled
-  test.skip('create: required and optional params', async () => {
-    const response = await client.embeddings.create({
+  test.skip('createEmbedding: required and optional params', async () => {
+    const response = await client.embeddings.createEmbedding({
       input: {},
       model: 'model',
       dimensions: 0,

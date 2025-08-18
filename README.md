@@ -29,17 +29,13 @@ const client = new Relaxai({
   apiKey: process.env['RELAXAI_API_KEY'], // This is the default and can be omitted
 });
 
-const response = await client.chat.createCompletion({
-  messages: [
-    { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
-    { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
-  ],
-  model: 'DeepSeek-R1-0528',
+const chatCompletionResponse = await client.chat.createCompletion({
+  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+  model: 'Llama-4-Maverick-17B-128E',
   max_tokens: 100,
-  temperature: 0.7,
 });
 
-console.log(response.id);
+console.log(chatCompletionResponse.choices);
 ```
 
 ### Request & Response types
@@ -55,15 +51,11 @@ const client = new Relaxai({
 });
 
 const params: Relaxai.ChatCreateCompletionParams = {
-  messages: [
-    { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
-    { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
-  ],
-  model: 'DeepSeek-R1-0528',
+  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+  model: 'Llama-4-Maverick-17B-128E',
   max_tokens: 100,
-  temperature: 0.7,
 };
-const response: Relaxai.ChatCreateCompletionResponse = await client.chat.createCompletion(params);
+const chatCompletionResponse: Relaxai.ChatCompletionResponse = await client.chat.createCompletion(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -76,15 +68,11 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const response = await client.chat
+const chatCompletionResponse = await client.chat
   .createCompletion({
-    messages: [
-      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
-      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
-    ],
-    model: 'DeepSeek-R1-0528',
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
-    temperature: 0.7,
   })
   .catch(async (err) => {
     if (err instanceof Relaxai.APIError) {
@@ -126,7 +114,7 @@ const client = new Relaxai({
 });
 
 // Or, configure per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' }, { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' }], model: 'DeepSeek-R1-0528', max_tokens: 100, temperature: 0.7 }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   maxRetries: 5,
 });
 ```
@@ -143,7 +131,7 @@ const client = new Relaxai({
 });
 
 // Override per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' }, { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' }], model: 'DeepSeek-R1-0528', max_tokens: 100, temperature: 0.7 }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   timeout: 5 * 1000,
 });
 ```
@@ -168,31 +156,23 @@ const client = new Relaxai();
 
 const response = await client.chat
   .createCompletion({
-    messages: [
-      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
-      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
-    ],
-    model: 'DeepSeek-R1-0528',
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
-    temperature: 0.7,
   })
   .asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: response, response: raw } = await client.chat
+const { data: chatCompletionResponse, response: raw } = await client.chat
   .createCompletion({
-    messages: [
-      { MultiContent: [{}], role: 'system', content: 'You are a helpful assistant.' },
-      { MultiContent: [{}], role: 'user', content: 'Tell me about climate change.' },
-    ],
-    model: 'DeepSeek-R1-0528',
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
-    temperature: 0.7,
   })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(response.id);
+console.log(chatCompletionResponse.id);
 ```
 
 ### Logging

@@ -19,16 +19,22 @@ import { APIPromise } from './core/api-promise';
 import {
   Chat,
   ChatCompletionMessage,
+  ChatCompletionRequest,
+  ChatCompletionResponse,
   ChatCreateCompletionParams,
-  ChatCreateCompletionResponse,
   ContentFilterResults,
   FunctionCall,
   FunctionDefinition,
-  Usage,
+  StreamOptions,
 } from './resources/chat';
-import { EmbeddingCreateParams, EmbeddingCreateResponse, Embeddings } from './resources/embeddings';
-import { Health, HealthCheckResponse } from './resources/health';
-import { Model, ModelListResponse, Models } from './resources/models';
+import {
+  EmbeddingCreateEmbeddingParams,
+  EmbeddingRequest,
+  EmbeddingResponse,
+  Embeddings,
+} from './resources/embeddings';
+import { Model, ModelList, Models } from './resources/models';
+import { HealthResponse } from './resources/top-level';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -46,7 +52,7 @@ export interface ClientOptions {
   /**
    * Defaults to process.env['RELAXAI_API_KEY'].
    */
-  apiKey?: string | null | undefined;
+  apiKey?: string | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
@@ -121,7 +127,7 @@ export interface ClientOptions {
  * API Client for interfacing with the Relaxai API.
  */
 export class Relaxai {
-  apiKey: string | null;
+  apiKey: string;
 
   baseURL: string;
   maxRetries: number;
@@ -138,8 +144,8 @@ export class Relaxai {
   /**
    * API Client for interfacing with the Relaxai API.
    *
-   * @param {string | null | undefined} [opts.apiKey=process.env['RELAXAI_API_KEY'] ?? null]
-   * @param {string} [opts.baseURL=process.env['RELAXAI_BASE_URL'] ?? http://127.0.0.1] - Override the default base URL for the API.
+   * @param {string | undefined} [opts.apiKey=process.env['RELAXAI_API_KEY'] ?? undefined]
+   * @param {string} [opts.baseURL=process.env['RELAXAI_BASE_URL'] ?? https://api.relax.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -149,13 +155,19 @@ export class Relaxai {
    */
   constructor({
     baseURL = readEnv('RELAXAI_BASE_URL'),
-    apiKey = readEnv('RELAXAI_API_KEY') ?? null,
+    apiKey = readEnv('RELAXAI_API_KEY'),
     ...opts
   }: ClientOptions = {}) {
+    if (apiKey === undefined) {
+      throw new Errors.RelaxaiError(
+        "The RELAXAI_API_KEY environment variable is missing or empty; either provide it, or instantiate the Relaxai client with an apiKey option, like new Relaxai({ apiKey: 'My API Key' }).",
+      );
+    }
+
     const options: ClientOptions = {
       apiKey,
       ...opts,
-      baseURL: baseURL || `http://127.0.0.1`,
+      baseURL: baseURL || `https://api.relax.ai`,
     };
 
     this.baseURL = options.baseURL!;
@@ -201,7 +213,14 @@ export class Relaxai {
    * Check whether the base URL is set to its default.
    */
   #baseURLOverridden(): boolean {
-    return this.baseURL !== 'http://127.0.0.1';
+    return this.baseURL !== 'https://api.relax.ai';
+  }
+
+  /**
+   * Check the health of the service.
+   */
+  health(options?: RequestOptions): APIPromise<string> {
+    return this.get('/v1/health', options);
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
@@ -209,22 +228,10 @@ export class Relaxai {
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
-    if (this.apiKey && values.get('authorization')) {
-      return;
-    }
-    if (nulls.has('authorization')) {
-      return;
-    }
-
-    throw new Error(
-      'Could not resolve authentication method. Expected the apiKey to be set. Or for the "Authorization" headers to be explicitly omitted',
-    );
+    return;
   }
 
   protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
-    if (this.apiKey == null) {
-      return undefined;
-    }
     return buildHeaders([{ Authorization: `Bearer ${this.apiKey}` }]);
   }
 
@@ -734,36 +741,40 @@ export class Relaxai {
 
   chat: API.Chat = new API.Chat(this);
   embeddings: API.Embeddings = new API.Embeddings(this);
-  health: API.Health = new API.Health(this);
   models: API.Models = new API.Models(this);
 }
 
 Relaxai.Chat = Chat;
 Relaxai.Embeddings = Embeddings;
-Relaxai.Health = Health;
 Relaxai.Models = Models;
 
 export declare namespace Relaxai {
   export type RequestOptions = Opts.RequestOptions;
 
+  export { type HealthResponse as HealthResponse };
+
   export {
     Chat as Chat,
     type ChatCompletionMessage as ChatCompletionMessage,
+    type ChatCompletionRequest as ChatCompletionRequest,
+    type ChatCompletionResponse as ChatCompletionResponse,
     type ContentFilterResults as ContentFilterResults,
     type FunctionCall as FunctionCall,
     type FunctionDefinition as FunctionDefinition,
-    type Usage as Usage,
-    type ChatCreateCompletionResponse as ChatCreateCompletionResponse,
+    type StreamOptions as StreamOptions,
     type ChatCreateCompletionParams as ChatCreateCompletionParams,
   };
 
   export {
     Embeddings as Embeddings,
-    type EmbeddingCreateResponse as EmbeddingCreateResponse,
-    type EmbeddingCreateParams as EmbeddingCreateParams,
+    type EmbeddingRequest as EmbeddingRequest,
+    type EmbeddingResponse as EmbeddingResponse,
+    type EmbeddingCreateEmbeddingParams as EmbeddingCreateEmbeddingParams,
   };
 
-  export { Health as Health, type HealthCheckResponse as HealthCheckResponse };
+  export { Models as Models, type Model as Model, type ModelList as ModelList };
 
-  export { Models as Models, type Model as Model, type ModelListResponse as ModelListResponse };
+  export type OpenAICompletionTokensDetails = API.OpenAICompletionTokensDetails;
+  export type OpenAIPromptTokensDetails = API.OpenAIPromptTokensDetails;
+  export type OpenAIUsage = API.OpenAIUsage;
 }

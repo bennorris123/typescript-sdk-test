@@ -7,17 +7,17 @@ import { path } from '../internal/utils/path';
 
 export class Models extends APIResource {
   /**
-   * Get the details of the given model
+   * List all the available models
    */
-  retrieve(model: string, options?: RequestOptions): APIPromise<Model> {
-    return this._client.get(path`/v1/models/${model}`, options);
+  listModels(options?: RequestOptions): APIPromise<ModelList> {
+    return this._client.get('/v1/models', options);
   }
 
   /**
-   * List all the available models
+   * Get the details of the given model
    */
-  list(options?: RequestOptions): APIPromise<ModelListResponse> {
-    return this._client.get('/v1/models', options);
+  retrieveModel(model: string, options?: RequestOptions): APIPromise<Model> {
+    return this._client.get(path`/v1/models/${model}`, options);
   }
 }
 
@@ -67,12 +67,12 @@ export namespace Model {
   }
 }
 
-export interface ModelListResponse {
+export interface ModelList {
   data: Array<Model>;
 
   httpHeader: { [key: string]: Array<string> };
 }
 
 export declare namespace Models {
-  export { type Model as Model, type ModelListResponse as ModelListResponse };
+  export { type Model as Model, type ModelList as ModelList };
 }
