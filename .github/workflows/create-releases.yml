@@ -9,7 +9,7 @@ on:
 jobs:
   release:
     name: release
-    if: github.ref == 'refs/heads/main' && github.repository == 'relax-ai/typescript-sdk'
+    if: github.ref == 'refs/heads/main' && github.repository == 'relax-ai/typescript-sdk-test'
     runs-on: ubuntu-latest
 
     steps:

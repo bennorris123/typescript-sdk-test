@@ -42,15 +42,15 @@ If you’d like to use the repository from source, you can either install from g
 To install via git:
 
 ```sh
-$ npm install git+ssh://git@github.com:relax-ai/typescript-sdk.git
+$ npm install git+ssh://git@github.com:relax-ai/typescript-sdk-test.git
 ```
 
 Alternatively, to link a local copy of the repo:
 
 ```sh
 # Clone
-$ git clone https://www.github.com/relax-ai/typescript-sdk
-$ cd typescript-sdk
+$ git clone https://www.github.com/relax-ai/typescript-sdk-test
+$ cd typescript-sdk-test
 
 # With yarn
 $ yarn link
