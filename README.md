@@ -51,7 +51,7 @@ const client = new Relaxai({
 });
 
 const params: Relaxai.ChatCreateCompletionParams = {
-  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }],
   model: 'Llama-4-Maverick-17B-128E',
   max_tokens: 100,
 };
@@ -70,7 +70,7 @@ a subclass of `APIError` will be thrown:
 ```ts
 const chatCompletionResponse = await client.chat
   .createCompletion({
-    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }],
     model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
   })
@@ -114,7 +114,7 @@ const client = new Relaxai({
 });
 
 // Or, configure per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   maxRetries: 5,
 });
 ```
@@ -131,7 +131,7 @@ const client = new Relaxai({
 });
 
 // Override per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   timeout: 5 * 1000,
 });
 ```
@@ -156,7 +156,7 @@ const client = new Relaxai();
 
 const response = await client.chat
   .createCompletion({
-    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }],
     model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
   })
@@ -166,7 +166,7 @@ console.log(response.statusText); // access the underlying Response object
 
 const { data: chatCompletionResponse, response: raw } = await client.chat
   .createCompletion({
-    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello there, how are you?' }],
     model: 'Llama-4-Maverick-17B-128E',
     max_tokens: 100,
   })
