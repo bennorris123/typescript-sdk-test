@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "relaxai-test/*": ["dist/src/*"],
-      "relaxai-test": ["dist/src/index.ts"]
+      "relaxai/*": ["dist/src/*"],
+      "relaxai": ["dist/src/index.ts"]
     },
     "noEmit": false,
     "declaration": true,

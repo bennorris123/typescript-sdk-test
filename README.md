@@ -1,8 +1,8 @@
-# Relaxai Test TypeScript API Library
+# Relaxai TypeScript API Library
 
-[![NPM version](<https://img.shields.io/npm/v/relaxai-test.svg?label=npm%20(stable)>)](https://npmjs.org/package/relaxai-test) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/relaxai-test)
+[![NPM version](<https://img.shields.io/npm/v/relaxai.svg?label=npm%20(stable)>)](https://npmjs.org/package/relaxai) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/relaxai)
 
-This library provides convenient access to the Relaxai Test REST API from server-side TypeScript or JavaScript.
+This library provides convenient access to the Relaxai REST API from server-side TypeScript or JavaScript.
 
 The REST API documentation can be found on [www.relax.ai](https://www.relax.ai). The full API of this library can be found in [api.md](api.md).
 
@@ -11,11 +11,11 @@ It is generated with [Stainless](https://www.stainless.com/).
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:relax-ai/typescript-sdk.git
+npm install git+ssh://git@github.com:bennorris123/typescript-sdk-test.git
 ```
 
 > [!NOTE]
-> Once this package is [published to npm](https://www.stainless.com/docs/guides/publish), this will become: `npm install relaxai-test`
+> Once this package is [published to npm](https://www.stainless.com/docs/guides/publish), this will become: `npm install relaxai`
 
 ## Usage
 
@@ -23,18 +23,19 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
-  apiKey: process.env['RELAXAI_TEST_API_KEY'], // This is the default and can be omitted
+const client = new Relaxai({
+  apiKey: process.env['RELAXAI_API_KEY'], // This is the default and can be omitted
 });
 
-const response = await client.chat.createCompletion({
-  messages: [{ MultiContent: [{}], role: 'role' }],
-  model: 'model',
+const chatCompletionResponse = await client.chat.createCompletion({
+  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+  model: 'Llama-4-Maverick-17B-128E',
+  max_tokens: 100,
 });
 
-console.log(response.id);
+console.log(chatCompletionResponse.choices);
 ```
 
 ### Request & Response types
@@ -43,17 +44,18 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
-  apiKey: process.env['RELAXAI_TEST_API_KEY'], // This is the default and can be omitted
+const client = new Relaxai({
+  apiKey: process.env['RELAXAI_API_KEY'], // This is the default and can be omitted
 });
 
-const params: RelaxaiTest.ChatCreateCompletionParams = {
-  messages: [{ MultiContent: [{}], role: 'role' }],
-  model: 'model',
+const params: Relaxai.ChatCreateCompletionParams = {
+  messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+  model: 'Llama-4-Maverick-17B-128E',
+  max_tokens: 100,
 };
-const response: RelaxaiTest.ChatCreateCompletionResponse = await client.chat.createCompletion(params);
+const chatCompletionResponse: Relaxai.ChatCompletionResponse = await client.chat.createCompletion(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -66,10 +68,14 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const response = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+const chatCompletionResponse = await client.chat
+  .createCompletion({
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
+    max_tokens: 100,
+  })
   .catch(async (err) => {
-    if (err instanceof RelaxaiTest.APIError) {
+    if (err instanceof Relaxai.APIError) {
       console.log(err.status); // 400
       console.log(err.name); // BadRequestError
       console.log(err.headers); // {server: 'nginx', ...}
@@ -103,12 +109,12 @@ You can use the `maxRetries` option to configure or disable this:
 <!-- prettier-ignore -->
 ```js
 // Configure the default for all requests:
-const client = new RelaxaiTest({
+const client = new Relaxai({
   maxRetries: 0, // default is 2
 });
 
 // Or, configure per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   maxRetries: 5,
 });
 ```
@@ -120,12 +126,12 @@ Requests time out after 1 minute by default. You can configure this with a `time
 <!-- prettier-ignore -->
 ```ts
 // Configure the default for all requests:
-const client = new RelaxaiTest({
+const client = new Relaxai({
   timeout: 20 * 1000, // 20 seconds (default is 1 minute)
 });
 
 // Override per-request:
-await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' }, {
+await client.chat.createCompletion({ messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }], model: 'Llama-4-Maverick-17B-128E', max_tokens: 100 }, {
   timeout: 5 * 1000,
 });
 ```
@@ -146,19 +152,27 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 
 <!-- prettier-ignore -->
 ```ts
-const client = new RelaxaiTest();
+const client = new Relaxai();
 
 const response = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+  .createCompletion({
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
+    max_tokens: 100,
+  })
   .asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: response, response: raw } = await client.chat
-  .createCompletion({ messages: [{ MultiContent: [{}], role: 'role' }], model: 'model' })
+const { data: chatCompletionResponse, response: raw } = await client.chat
+  .createCompletion({
+    messages: [{ MultiContent: [{}], role: 'user', content: 'Hello, how are you?' }],
+    model: 'Llama-4-Maverick-17B-128E',
+    max_tokens: 100,
+  })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(response.id);
+console.log(chatCompletionResponse.id);
 ```
 
 ### Logging
@@ -171,13 +185,13 @@ console.log(response.id);
 
 The log level can be configured in two ways:
 
-1. Via the `RELAXAI_TEST_LOG` environment variable
+1. Via the `RELAXAI_LOG` environment variable
 2. Using the `logLevel` client option (overrides the environment variable if set)
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
+const client = new Relaxai({
   logLevel: 'debug', // Show all log messages
 });
 ```
@@ -203,13 +217,13 @@ When providing a custom logger, the `logLevel` option still controls which messa
 below the configured level will not be sent to your logger.
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 import pino from 'pino';
 
 const logger = pino();
 
-const client = new RelaxaiTest({
-  logger: logger.child({ name: 'RelaxaiTest' }),
+const client = new Relaxai({
+  logger: logger.child({ name: 'Relaxai' }),
   logLevel: 'debug', // Send all messages to pino, allowing it to filter
 });
 ```
@@ -272,10 +286,10 @@ globalThis.fetch = fetch;
 Or pass it to the client:
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 import fetch from 'my-fetch';
 
-const client = new RelaxaiTest({ fetch });
+const client = new Relaxai({ fetch });
 ```
 
 ### Fetch options
@@ -283,9 +297,9 @@ const client = new RelaxaiTest({ fetch });
 If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
+const client = new Relaxai({
   fetchOptions: {
     // `RequestInit` options
   },
@@ -300,11 +314,11 @@ options to requests:
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 import * as undici from 'undici';
 
 const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
-const client = new RelaxaiTest({
+const client = new Relaxai({
   fetchOptions: {
     dispatcher: proxyAgent,
   },
@@ -314,9 +328,9 @@ const client = new RelaxaiTest({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/bun.svg" align="top" width="18" height="21"> **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
 
 ```ts
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
+const client = new Relaxai({
   fetchOptions: {
     proxy: 'http://localhost:8888',
   },
@@ -326,10 +340,10 @@ const client = new RelaxaiTest({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/deno.svg" align="top" width="18" height="21"> **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
 
 ```ts
-import RelaxaiTest from 'npm:relaxai-test';
+import Relaxai from 'npm:relaxai';
 
 const httpClient = Deno.createHttpClient({ proxy: { url: 'http://localhost:8888' } });
-const client = new RelaxaiTest({
+const client = new Relaxai({
   fetchOptions: {
     client: httpClient,
   },
@@ -348,7 +362,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/relax-ai/typescript-sdk/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/bennorris123/typescript-sdk-test/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 

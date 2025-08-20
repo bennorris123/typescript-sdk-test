@@ -2,6 +2,7 @@
 
 import { APIResource } from '../core/resource';
 import * as ChatAPI from './chat';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
@@ -12,7 +13,7 @@ export class Chat extends APIResource {
   createCompletion(
     body: ChatCreateCompletionParams,
     options?: RequestOptions,
-  ): APIPromise<ChatCreateCompletionResponse> {
+  ): APIPromise<ChatCompletionResponse> {
     return this._client.post('/v1/chat/completions', { body, ...options });
   }
 }
@@ -62,6 +63,162 @@ export namespace ChatCompletionMessage {
     id?: string;
 
     index?: number;
+  }
+}
+
+export interface ChatCompletionRequest {
+  messages: Array<ChatCompletionMessage>;
+
+  model: string;
+
+  chat_template_kwargs?: unknown;
+
+  frequency_penalty?: number;
+
+  function_call?: unknown;
+
+  functions?: Array<FunctionDefinition>;
+
+  logit_bias?: { [key: string]: number };
+
+  logprobs?: boolean;
+
+  max_completion_tokens?: number;
+
+  max_tokens?: number;
+
+  metadata?: { [key: string]: string };
+
+  n?: number;
+
+  parallel_tool_calls?: unknown;
+
+  prediction?: ChatCompletionRequest.Prediction;
+
+  presence_penalty?: number;
+
+  reasoning_effort?: string;
+
+  response_format?: ChatCompletionRequest.ResponseFormat;
+
+  seed?: number;
+
+  stop?: Array<string>;
+
+  store?: boolean;
+
+  stream?: boolean;
+
+  stream_options?: StreamOptions;
+
+  temperature?: number;
+
+  tool_choice?: unknown;
+
+  tools?: Array<ChatCompletionRequest.Tool>;
+
+  top_logprobs?: number;
+
+  top_p?: number;
+
+  user?: string;
+}
+
+export namespace ChatCompletionRequest {
+  export interface Prediction {
+    content: string;
+
+    type: string;
+  }
+
+  export interface ResponseFormat {
+    json_schema?: ResponseFormat.JsonSchema;
+
+    type?: string;
+  }
+
+  export namespace ResponseFormat {
+    export interface JsonSchema {
+      name: string;
+
+      strict: boolean;
+
+      description?: string;
+    }
+  }
+
+  export interface Tool {
+    type: string;
+
+    function?: ChatAPI.FunctionDefinition;
+  }
+}
+
+export interface ChatCompletionResponse {
+  id: string;
+
+  choices: Array<ChatCompletionResponse.Choice>;
+
+  created: number;
+
+  httpHeader: { [key: string]: Array<string> };
+
+  model: string;
+
+  object: string;
+
+  system_fingerprint: string;
+
+  usage: Shared.OpenAIUsage;
+
+  prompt_filter_results?: Array<ChatCompletionResponse.PromptFilterResult>;
+}
+
+export namespace ChatCompletionResponse {
+  export interface Choice {
+    finish_reason: string;
+
+    index: number;
+
+    message: ChatAPI.ChatCompletionMessage;
+
+    content_filter_results?: ChatAPI.ContentFilterResults;
+
+    logprobs?: Choice.Logprobs;
+  }
+
+  export namespace Choice {
+    export interface Logprobs {
+      content: Array<Logprobs.Content>;
+    }
+
+    export namespace Logprobs {
+      export interface Content {
+        token: string;
+
+        logprob: number;
+
+        top_logprobs: Array<Content.TopLogprob>;
+
+        bytes?: string;
+      }
+
+      export namespace Content {
+        export interface TopLogprob {
+          token: string;
+
+          logprob: number;
+
+          bytes?: string;
+        }
+      }
+    }
+  }
+
+  export interface PromptFilterResult {
+    index: number;
+
+    content_filter_results?: ChatAPI.ContentFilterResults;
   }
 }
 
@@ -135,104 +292,6 @@ export interface FunctionDefinition {
 
 export interface StreamOptions {
   include_usage?: boolean;
-}
-
-export interface Usage {
-  completion_tokens: number;
-
-  completion_tokens_details: Usage.CompletionTokensDetails;
-
-  prompt_tokens: number;
-
-  prompt_tokens_details: Usage.PromptTokensDetails;
-
-  total_tokens: number;
-}
-
-export namespace Usage {
-  export interface CompletionTokensDetails {
-    accepted_prediction_tokens: number;
-
-    audio_tokens: number;
-
-    reasoning_tokens: number;
-
-    rejected_prediction_tokens: number;
-  }
-
-  export interface PromptTokensDetails {
-    audio_tokens: number;
-
-    cached_tokens: number;
-  }
-}
-
-export interface ChatCreateCompletionResponse {
-  id: string;
-
-  choices: Array<ChatCreateCompletionResponse.Choice>;
-
-  created: number;
-
-  httpHeader: { [key: string]: Array<string> };
-
-  model: string;
-
-  object: string;
-
-  system_fingerprint: string;
-
-  usage: Usage;
-
-  prompt_filter_results?: Array<ChatCreateCompletionResponse.PromptFilterResult>;
-}
-
-export namespace ChatCreateCompletionResponse {
-  export interface Choice {
-    finish_reason: string;
-
-    index: number;
-
-    message: ChatAPI.ChatCompletionMessage;
-
-    content_filter_results?: ChatAPI.ContentFilterResults;
-
-    logprobs?: Choice.Logprobs;
-  }
-
-  export namespace Choice {
-    export interface Logprobs {
-      content: Array<Logprobs.Content>;
-    }
-
-    export namespace Logprobs {
-      export interface Content {
-        token: string;
-
-        logprob: number;
-
-        top_logprobs: Array<Content.TopLogprob>;
-
-        bytes?: string;
-      }
-
-      export namespace Content {
-        export interface TopLogprob {
-          token: string;
-
-          logprob: number;
-
-          bytes?: string;
-        }
-      }
-    }
-  }
-
-  export interface PromptFilterResult {
-    index: number;
-
-    content_filter_results?: ChatAPI.ContentFilterResults;
-  }
 }
 
 export interface ChatCreateCompletionParams {
@@ -310,11 +369,6 @@ export namespace ChatCreateCompletionParams {
     export interface JsonSchema {
       name: string;
 
-      /**
-       * JSON schema object
-       */
-      schema: { [key: string]: unknown };
-
       strict: boolean;
 
       description?: string;
@@ -331,12 +385,12 @@ export namespace ChatCreateCompletionParams {
 export declare namespace Chat {
   export {
     type ChatCompletionMessage as ChatCompletionMessage,
+    type ChatCompletionRequest as ChatCompletionRequest,
+    type ChatCompletionResponse as ChatCompletionResponse,
     type ContentFilterResults as ContentFilterResults,
     type FunctionCall as FunctionCall,
     type FunctionDefinition as FunctionDefinition,
     type StreamOptions as StreamOptions,
-    type Usage as Usage,
-    type ChatCreateCompletionResponse as ChatCreateCompletionResponse,
     type ChatCreateCompletionParams as ChatCreateCompletionParams,
   };
 }

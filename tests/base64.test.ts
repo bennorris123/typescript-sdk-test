@@ -1,4 +1,4 @@
-import { fromBase64, toBase64 } from 'relaxai-test/internal/utils/base64';
+import { fromBase64, toBase64 } from 'relaxai/internal/utils/base64';
 
 describe.each(['Buffer', 'atob'])('with %s', (mode) => {
   let originalBuffer: BufferConstructor;

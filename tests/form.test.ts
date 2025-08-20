@@ -1,5 +1,5 @@
-import { multipartFormRequestOptions, createForm } from 'relaxai-test/internal/uploads';
-import { toFile } from 'relaxai-test/core/uploads';
+import { multipartFormRequestOptions, createForm } from 'relaxai/internal/uploads';
+import { toFile } from 'relaxai/core/uploads';
 
 describe('form data validation', () => {
   test('valid values do not error', async () => {

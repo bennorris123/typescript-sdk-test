@@ -1,6 +1,6 @@
 import fs from 'fs';
-import type { ResponseLike } from 'relaxai-test/internal/to-file';
-import { toFile } from 'relaxai-test/core/uploads';
+import type { ResponseLike } from 'relaxai/internal/to-file';
+import { toFile } from 'relaxai/core/uploads';
 import { File } from 'node:buffer';
 
 class MyClass {
@@ -97,7 +97,7 @@ describe('missing File error message', () => {
   });
 
   test('is thrown', async () => {
-    const uploads = await import('relaxai-test/core/uploads');
+    const uploads = await import('relaxai/core/uploads');
     await expect(
       uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
     ).rejects.toMatchInlineSnapshot(

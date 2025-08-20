@@ -1,12 +1,12 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export { RelaxaiTest as default } from './client';
+export { Relaxai as default } from './client';
 
 export { type Uploadable, toFile } from './core/uploads';
 export { APIPromise } from './core/api-promise';
-export { RelaxaiTest, type ClientOptions } from './client';
+export { Relaxai, type ClientOptions } from './client';
 export {
-  RelaxaiTestError,
+  RelaxaiError,
   APIError,
   APIConnectionError,
   APIConnectionTimeoutError,

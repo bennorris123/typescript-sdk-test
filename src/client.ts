@@ -19,18 +19,22 @@ import { APIPromise } from './core/api-promise';
 import {
   Chat,
   ChatCompletionMessage,
+  ChatCompletionRequest,
+  ChatCompletionResponse,
   ChatCreateCompletionParams,
-  ChatCreateCompletionResponse,
   ContentFilterResults,
   FunctionCall,
   FunctionDefinition,
   StreamOptions,
-  Usage,
 } from './resources/chat';
-import { CompletionCreateParams, CompletionCreateResponse, Completions } from './resources/completions';
-import { EmbeddingCreateParams, EmbeddingCreateResponse, Embeddings } from './resources/embeddings';
-import { Health, HealthCheckResponse } from './resources/health';
-import { Model, ModelListResponse, Models } from './resources/models';
+import {
+  EmbeddingCreateEmbeddingParams,
+  EmbeddingRequest,
+  EmbeddingResponse,
+  Embeddings,
+} from './resources/embeddings';
+import { Model, ModelList, Models } from './resources/models';
+import { HealthResponse } from './resources/top-level';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -46,14 +50,14 @@ import { isEmptyObj } from './internal/utils/values';
 
 export interface ClientOptions {
   /**
-   * Defaults to process.env['RELAXAI_TEST_API_KEY'].
+   * Defaults to process.env['RELAXAI_API_KEY'].
    */
-  apiKey?: string | null | undefined;
+  apiKey?: string | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
-   * Defaults to process.env['RELAXAI_TEST_BASE_URL'].
+   * Defaults to process.env['RELAXAI_BASE_URL'].
    */
   baseURL?: string | null | undefined;
 
@@ -107,7 +111,7 @@ export interface ClientOptions {
   /**
    * Set the log level.
    *
-   * Defaults to process.env['RELAXAI_TEST_LOG'] or 'warn' if it isn't set.
+   * Defaults to process.env['RELAXAI_LOG'] or 'warn' if it isn't set.
    */
   logLevel?: LogLevel | undefined;
 
@@ -120,10 +124,10 @@ export interface ClientOptions {
 }
 
 /**
- * API Client for interfacing with the Relaxai Test API.
+ * API Client for interfacing with the Relaxai API.
  */
-export class RelaxaiTest {
-  apiKey: string | null;
+export class Relaxai {
+  apiKey: string;
 
   baseURL: string;
   maxRetries: number;
@@ -138,10 +142,10 @@ export class RelaxaiTest {
   private _options: ClientOptions;
 
   /**
-   * API Client for interfacing with the Relaxai Test API.
+   * API Client for interfacing with the Relaxai API.
    *
-   * @param {string | null | undefined} [opts.apiKey=process.env['RELAXAI_TEST_API_KEY'] ?? null]
-   * @param {string} [opts.baseURL=process.env['RELAXAI_TEST_BASE_URL'] ?? /] - Override the default base URL for the API.
+   * @param {string | undefined} [opts.apiKey=process.env['RELAXAI_API_KEY'] ?? undefined]
+   * @param {string} [opts.baseURL=process.env['RELAXAI_BASE_URL'] ?? https://api.relax.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -150,25 +154,31 @@ export class RelaxaiTest {
    * @param {Record<string, string | undefined>} opts.defaultQuery - Default query parameters to include with every request to the API.
    */
   constructor({
-    baseURL = readEnv('RELAXAI_TEST_BASE_URL'),
-    apiKey = readEnv('RELAXAI_TEST_API_KEY') ?? null,
+    baseURL = readEnv('RELAXAI_BASE_URL'),
+    apiKey = readEnv('RELAXAI_API_KEY'),
     ...opts
   }: ClientOptions = {}) {
+    if (apiKey === undefined) {
+      throw new Errors.RelaxaiError(
+        "The RELAXAI_API_KEY environment variable is missing or empty; either provide it, or instantiate the Relaxai client with an apiKey option, like new Relaxai({ apiKey: 'My API Key' }).",
+      );
+    }
+
     const options: ClientOptions = {
       apiKey,
       ...opts,
-      baseURL: baseURL || `/`,
+      baseURL: baseURL || `https://api.relax.ai`,
     };
 
     this.baseURL = options.baseURL!;
-    this.timeout = options.timeout ?? RelaxaiTest.DEFAULT_TIMEOUT /* 1 minute */;
+    this.timeout = options.timeout ?? Relaxai.DEFAULT_TIMEOUT /* 1 minute */;
     this.logger = options.logger ?? console;
     const defaultLogLevel = 'warn';
     // Set default logLevel early so that we can log a warning in parseLogLevel.
     this.logLevel = defaultLogLevel;
     this.logLevel =
       parseLogLevel(options.logLevel, 'ClientOptions.logLevel', this) ??
-      parseLogLevel(readEnv('RELAXAI_TEST_LOG'), "process.env['RELAXAI_TEST_LOG']", this) ??
+      parseLogLevel(readEnv('RELAXAI_LOG'), "process.env['RELAXAI_LOG']", this) ??
       defaultLogLevel;
     this.fetchOptions = options.fetchOptions;
     this.maxRetries = options.maxRetries ?? 2;
@@ -203,7 +213,14 @@ export class RelaxaiTest {
    * Check whether the base URL is set to its default.
    */
   #baseURLOverridden(): boolean {
-    return this.baseURL !== '/';
+    return this.baseURL !== 'https://api.relax.ai';
+  }
+
+  /**
+   * Check the health of the service.
+   */
+  health(options?: RequestOptions): APIPromise<string> {
+    return this.get('/v1/health', options);
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
@@ -211,22 +228,10 @@ export class RelaxaiTest {
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
-    if (this.apiKey && values.get('authorization')) {
-      return;
-    }
-    if (nulls.has('authorization')) {
-      return;
-    }
-
-    throw new Error(
-      'Could not resolve authentication method. Expected the apiKey to be set. Or for the "Authorization" headers to be explicitly omitted',
-    );
+    return;
   }
 
   protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
-    if (this.apiKey == null) {
-      return undefined;
-    }
     return buildHeaders([{ Authorization: `Bearer ${this.apiKey}` }]);
   }
 
@@ -243,7 +248,7 @@ export class RelaxaiTest {
         if (value === null) {
           return `${encodeURIComponent(key)}=`;
         }
-        throw new Errors.RelaxaiTestError(
+        throw new Errors.RelaxaiError(
           `Cannot stringify type ${typeof value}; Expected string, number, boolean, or null. If you need to pass nested query parameters, you can manually encode them, e.g. { query: { 'foo[key1]': value1, 'foo[key2]': value2 } }, and please open a GitHub issue requesting better support for your use case.`,
         );
       })
@@ -715,10 +720,10 @@ export class RelaxaiTest {
     }
   }
 
-  static RelaxaiTest = this;
+  static Relaxai = this;
   static DEFAULT_TIMEOUT = 60000; // 1 minute
 
-  static RelaxaiTestError = Errors.RelaxaiTestError;
+  static RelaxaiError = Errors.RelaxaiError;
   static APIError = Errors.APIError;
   static APIConnectionError = Errors.APIConnectionError;
   static APIConnectionTimeoutError = Errors.APIConnectionTimeoutError;
@@ -735,44 +740,41 @@ export class RelaxaiTest {
   static toFile = Uploads.toFile;
 
   chat: API.Chat = new API.Chat(this);
-  completions: API.Completions = new API.Completions(this);
   embeddings: API.Embeddings = new API.Embeddings(this);
-  health: API.Health = new API.Health(this);
   models: API.Models = new API.Models(this);
 }
-RelaxaiTest.Chat = Chat;
-RelaxaiTest.Completions = Completions;
-RelaxaiTest.Embeddings = Embeddings;
-RelaxaiTest.Health = Health;
-RelaxaiTest.Models = Models;
-export declare namespace RelaxaiTest {
+
+Relaxai.Chat = Chat;
+Relaxai.Embeddings = Embeddings;
+Relaxai.Models = Models;
+
+export declare namespace Relaxai {
   export type RequestOptions = Opts.RequestOptions;
+
+  export { type HealthResponse as HealthResponse };
 
   export {
     Chat as Chat,
     type ChatCompletionMessage as ChatCompletionMessage,
+    type ChatCompletionRequest as ChatCompletionRequest,
+    type ChatCompletionResponse as ChatCompletionResponse,
     type ContentFilterResults as ContentFilterResults,
     type FunctionCall as FunctionCall,
     type FunctionDefinition as FunctionDefinition,
     type StreamOptions as StreamOptions,
-    type Usage as Usage,
-    type ChatCreateCompletionResponse as ChatCreateCompletionResponse,
     type ChatCreateCompletionParams as ChatCreateCompletionParams,
   };
 
   export {
-    Completions as Completions,
-    type CompletionCreateResponse as CompletionCreateResponse,
-    type CompletionCreateParams as CompletionCreateParams,
-  };
-
-  export {
     Embeddings as Embeddings,
-    type EmbeddingCreateResponse as EmbeddingCreateResponse,
-    type EmbeddingCreateParams as EmbeddingCreateParams,
+    type EmbeddingRequest as EmbeddingRequest,
+    type EmbeddingResponse as EmbeddingResponse,
+    type EmbeddingCreateEmbeddingParams as EmbeddingCreateEmbeddingParams,
   };
 
-  export { Health as Health, type HealthCheckResponse as HealthCheckResponse };
+  export { Models as Models, type Model as Model, type ModelList as ModelList };
 
-  export { Models as Models, type Model as Model, type ModelListResponse as ModelListResponse };
+  export type OpenAICompletionTokensDetails = API.OpenAICompletionTokensDetails;
+  export type OpenAIPromptTokensDetails = API.OpenAIPromptTokensDetails;
+  export type OpenAIUsage = API.OpenAIUsage;
 }
