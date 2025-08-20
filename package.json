@@ -1,6 +1,6 @@
 {
   "name": "relaxai",
-  "version": "0.0.1-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "The official TypeScript library for the Relaxai API",
   "author": "Relaxai <hello@drelax.ai>",
   "types": "dist/index.d.ts",
