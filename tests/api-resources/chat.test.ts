@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import RelaxaiTest from 'relaxai-test';
+import Relaxai from 'relaxai';
 
-const client = new RelaxaiTest({
+const client = new Relaxai({
   apiKey: 'My API Key',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
@@ -57,7 +57,7 @@ describe('resource chat', () => {
       presence_penalty: 0,
       reasoning_effort: 'reasoning_effort',
       response_format: {
-        json_schema: { name: 'name', schema: { foo: 'bar' }, strict: true, description: 'description' },
+        json_schema: { name: 'name', strict: true, description: 'description' },
         type: 'type',
       },
       seed: 0,

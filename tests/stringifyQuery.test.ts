@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { RelaxaiTest } from 'relaxai-test';
+import { Relaxai } from 'relaxai';
 
-const { stringifyQuery } = RelaxaiTest.prototype as any;
+const { stringifyQuery } = Relaxai.prototype as any;
 
 describe(stringifyQuery, () => {
   for (const [input, expected] of [

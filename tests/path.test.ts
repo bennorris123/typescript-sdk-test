@@ -1,4 +1,4 @@
-import { createPathTagFunction, encodeURIPath } from 'relaxai-test/internal/utils/path';
+import { createPathTagFunction, encodeURIPath } from 'relaxai/internal/utils/path';
 import { inspect } from 'node:util';
 import { runInNewContext } from 'node:vm';
 

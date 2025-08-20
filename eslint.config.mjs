@@ -25,7 +25,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              regex: '^relaxai-test(/.*)?',
+              regex: '^relaxai(/.*)?',
               message: 'Use a relative import, not a package import.',
             },
           ],

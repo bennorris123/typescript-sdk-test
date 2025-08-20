@@ -55,12 +55,12 @@ $ cd typescript-sdk
 # With yarn
 $ yarn link
 $ cd ../my-package
-$ yarn link relaxai-test
+$ yarn link relaxai
 
 # With pnpm
 $ pnpm link --global
 $ cd ../my-package
-$ pnpm link -—global relaxai-test
+$ pnpm link -—global relaxai
 ```
 
 ## Running tests

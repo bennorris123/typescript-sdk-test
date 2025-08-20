@@ -1,11 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import type { RelaxaiTest } from '../client';
+import type { Relaxai } from '../client';
 
 export abstract class APIResource {
-  protected _client: RelaxaiTest;
+  protected _client: Relaxai;
 
-  constructor(client: RelaxaiTest) {
+  constructor(client: Relaxai) {
     this._client = client;
   }
 }
